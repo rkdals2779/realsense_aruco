@@ -28,7 +28,7 @@ def calibrate_charuco():
     allCorners = []
     allIds = []
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.00001)
-    images = glob.glob('/home/min/Downloads/D455capture/*jpg')
+    images = glob.glob(f'{os.getcwd()}/D455capture/*jpg')
     #imsize = None
     for im in images:
         print("=> Processing image {0}".format(im))
