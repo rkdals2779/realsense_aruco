@@ -1,4 +1,4 @@
-
+#!/home/min/.pyenv/versions/pyenv_py3810/bin/python3.8
 import cv2
 import glob
 import numpy as np
@@ -90,8 +90,7 @@ def detect_marker(matrix, distortion):
             gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             coners, ids, point = cv2.aruco.detectMarkers(gray_frame, aruco_dict, parameters=parameters)
             if np.all(ids != None):
-                # rvecs, tvecs, _objPoints = cv2.aruco.estimatePoseSingleMarkers(coners, 0.04, mtx, dist)
-                # frame = cv2.aruco.drawAxis(frame, mtx, dist, rvecs[0], tvecs[0], 0.04)
+
                 rvecs, tvecs, _objPoints = cv2.aruco.estimatePoseSingleMarkers(coners, 0.03, matrix, distortion)
                 frame = cv2.aruco.drawAxis(frame, matrix, distortion, rvecs[0], tvecs[0], 0.03)
                 rvecs_msg = rvecs.tolist()
@@ -103,24 +102,23 @@ def detect_marker(matrix, distortion):
                 tvecs_msg_y = tvecs_msg[0][0][1]
                 tvecs_msg_z = tvecs_msg[0][0][2]
 
-
-
                 x = tvecs_msg_x
                 y = tvecs_msg_y
                 z = tvecs_msg_z
-                cv2.putText(frame, f"{np.sqrt(x**2+y**2+z**2)}", (0, 300), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255))
+                y = -y
 
-                print()
-                print(x, " ", y, " ", z)
-                print(ids)
+                euler_x_to_xArm = np.radians(-180)
+                euler_y_to_xArm = np.radians(90)
+                euler_z_to_xArm = np.arctan2(x, z)
 
 
 
-                #cv2.putText(frame, "%5.2f/  %5.2f/  %5.2f" % ((tvecs[0][0][0]), (tvecs[0][0][1]), (tvecs[0][0][2])),
-                #            (0, 450), cv2.FONT_HERSHEY_PLAIN, 2.0, (0, 0, 255), 2)
-
-                #cv2.putText(frame, "%.1f cm / %.0f deg" % ((tvecs[0][0][2] * 100), (rvecs[0][0][2] / math.pi * 180)),
-                #            (0, 450), cv2.FONT_HERSHEY_PLAIN, 2.0, (0, 0, 255), 2)
+                #
+                #
+                # cv2.putText(frame, f"{round(d_euler_x)}, {round(d_euler_y)}, {round(d_euler_z)}", (0, 300), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                #             (255, 255, 255))
+                cv2.putText(frame, f"{x}, {y}, {z}", (0, 400), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255))
+                # print(rvecs_msg_x, " ", rvecs_msg_y, " ", rvecs_msg_z)
 
             frame = cv2.aruco.drawDetectedMarkers(frame, coners, ids)
             cv2.imshow('video', frame)
